@@ -1,0 +1,101 @@
+version: '3.7'
+
+x-services-volume:
+  &services-volume
+  type: bind
+  source: ./shared
+  target: /shared
+
+
+services:
+
+  backend:
+    container_name: backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+      # - redis
+      # - celery
+    command: sh ./entrypoint.sh
+    environment:
+      - PRODUCTION=False
+    env_file:
+      - '.env'
+    expose:
+      - 8000
+    ports:
+      - "8888:8888" # ipython notebook
+    volumes:
+      - ./backend:/app
+      - *services-volume
+      - static_volume:/app/staticfiles
+      - media_volume:/app/mediafiles
+
+  db:
+    container_name: db
+    image: postgres:14
+    volumes:
+      - ./database-volume:/var/lib/postgresql/data
+      - *services-volume
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=${SQL_PASSWORD}
+      - POSTGRES_USER=${SQL_USER}
+      - POSTGRES_DB=${SQL_DATABASE}
+    ports:
+      - "5435:5432"
+
+  nginx:
+    container_name: nginx_server
+    restart: always
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    volumes:
+      - static_volume:/usr/src/app/staticfiles
+      - media_volume:/usr/src/app/mediafiles
+    ports:
+      - 80:80
+      - 443:443
+    env_file:
+      - '.env'
+    depends_on:
+      - backend
+
+  redis:
+    image: redis
+    ports:
+      - "5672:5672"
+
+  # celery:
+  #   build: ./backend
+  #   command: celery -A config worker -l info
+  #   volumes:
+  #     - ./backend/:/app
+  #   environment:
+  #     - DEBUG=1
+  #   env_file:
+  #     - '.env'
+  #   depends_on:
+  #     - redis
+  #   restart: always
+
+  # celery-beat:
+  #   build: ./backend
+  #   command: celery -A settings beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+  #   volumes:
+  #     - ./backend/:/app
+  #   environment:
+  #     - DEBUG=1
+  #   env_file:
+  #     - '.env'
+  #   depends_on:
+  #     - redis
+  #     - celery
+
+
+volumes:
+  static_volume:
+  media_volume:

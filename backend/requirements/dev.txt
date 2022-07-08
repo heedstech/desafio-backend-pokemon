@@ -1,0 +1,12 @@
+-r base.txt
+
+ipython
+pytest
+pytest-django
+pytest-cov
+factory_boy
+pytest-xdist
+django-extensions
+jupyter
+notebook
+Werkzeug

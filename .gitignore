@@ -1,0 +1,9 @@
+# misc
+.DS_Store
+.idea
+.Trashes
+/database-volume/
+/database/*
+celerybeat.pid
+.env
+/.vscode
