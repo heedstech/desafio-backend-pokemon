@@ -5,7 +5,7 @@ Nesse desafio será necessário criar 3 endpoints e 1 cronjob
 Queremos possibilitar aos usuários adicionarem nomes dos seus pokemons favoritos para receber a sua Árvore de Evolução (futuras e passadas). Para isso devemos criar 3 endpoints:
 
 - Create endpoint que vai receber apenas o nome do pokemon
-- List endpoint que vai listar 20 endpoints por página e suas evoluções (apenas futuras evoluções)
+- List endpoint que vai listar 20 pokemons por página e suas evoluções (apenas futuras evoluções)
 - Detail endpoint que vai mostrar com detalhes dados daquele pokémon (todas as evoluções)
 
 *Obs: caso o pokemon não exista consiga ser achado deve ser deletado*
